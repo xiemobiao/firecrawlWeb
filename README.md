@@ -1,6 +1,6 @@
 # FireCrawl Web界面
 
-基于FireCrawl爬虫引擎的Web界面应用，提供图形化的爬虫管理和数据处理功能。
+根据firecrawl功能开发的web程序，提供图形化的爬虫管理和数据处理功能。
 
 ## 项目简介
 
