@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # 前端服务
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - firecrawl-network
+    depends_on:
+      - backend
+
+  # 后端服务
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    env_file:
+      - ../backend/.env
+    volumes:
+      - ../logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - firecrawl-network
+    depends_on:
+      - redis
+
+  # Redis服务
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - firecrawl-network
+
+  # FireCrawl服务
+  firecrawl:
+    build:
+      context: .
+      dockerfile: firecrawl.Dockerfile
+    ports:
+      - "3002:3002"
+    env_file:
+      - firecrawl.env
+    restart: unless-stopped
+    networks:
+      - firecrawl-network
+    depends_on:
+      - redis
+      - playwright-service
+
+  # Playwright服务
+  playwright-service:
+    image: mendableai/playwright-service:latest
+    restart: unless-stopped
+    networks:
+      - firecrawl-network
+
+networks:
+  firecrawl-network:
+    driver: bridge
+
+volumes:
+  redis-data:
