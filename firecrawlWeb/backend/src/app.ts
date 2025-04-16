@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import router from './routes/index';
 
 // 加载环境变量
 dotenv.config();
@@ -20,6 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // 路由
+app.use('/api', router);
+
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to FireCrawl Web API' });
 });

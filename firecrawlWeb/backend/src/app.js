@@ -9,6 +9,7 @@ const helmet_1 = __importDefault(require("helmet"));
 const morgan_1 = __importDefault(require("morgan"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const index_1 = __importDefault(require("./routes/index"));
 // 加载环境变量
 dotenv_1.default.config();
 // 创建Express应用
@@ -21,6 +22,7 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 // 路由
+app.use('/api', index_1.default);
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to FireCrawl Web API' });
 });

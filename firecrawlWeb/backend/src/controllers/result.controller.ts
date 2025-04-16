@@ -1,29 +1,36 @@
-// 删除重复导入，保留一次
 import { Request, Response } from 'express';
-import Result from '../models/result.model';
 
-export const getResultsByTask = async (req: Request, res: Response) => {
-  try {
-    const { taskId } = req.params;
-    const results = await Result.findAll({ where: { task_id: taskId } });
-    return res.status(200).json({ results });
-  } catch (error) {
-    console.error('获取任务结果错误:', error);
-    return res.status(500).json({ message: '服务器内部错误' });
-  }
-};
+interface Result {
+  id: number;
+  task_id: number;
+  url: string;
+  content_type: 'markdown' | 'html' | 'json' | 'screenshot';
+  content: string;
+  metadata: object | null;
+}
 
-export const exportResult = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const result = await Result.findByPk(id);
-    if (!result) {
-      return res.status(404).json({ message: '结果不存在' });
-    }
-    // 这里简单返回内容，实际可根据需求导出为文件等
-    return res.status(200).json({ content: result.content });
-  } catch (error) {
-    console.error('导出结果错误:', error);
-    return res.status(500).json({ message: '服务器内部错误' });
-  }
+const results: Result[] = [
+  {
+    id: 1,
+    task_id: 1,
+    url: 'http://example.com/data1',
+    content_type: 'markdown',
+    content: '# Example Markdown Content',
+    metadata: null,
+  },
+  {
+    id: 2,
+    task_id: 2,
+    url: 'http://example.org/data2',
+    content_type: 'html',
+    content: '<p>Example HTML content</p>',
+    metadata: null,
+  },
+];
+
+// 根据任务ID获取结果列表
+export const getResultsByTaskId = async (req: Request, res: Response) => {
+  const taskId = Number(req.params.taskId);
+  const filteredResults = results.filter(result => result.task_id === taskId);
+  res.json(filteredResults);
 };

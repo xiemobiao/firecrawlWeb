@@ -1,51 +1,54 @@
-// 删除重复导入，保留一次
 import { Request, Response } from 'express';
-import Task from '../models/task.model';
 
+// 模拟任务数据
+interface Task {
+  id: number;
+  user_id: number;
+  name: string;
+  type: string;
+  url: string;
+  status: string;
+  progress: number;
+}
+
+const tasks: Task[] = [
+  { id: 1, user_id: 1, name: '任务1', type: 'scrape', url: 'http://example.com', status: 'pending', progress: 0 },
+  { id: 2, user_id: 1, name: '任务2', type: 'crawl', url: 'http://example.org', status: 'running', progress: 40 },
+];
+
+// 获取用户所有任务
+export const getUserTasks = async (req: Request, res: Response) => {
+  // 假设req.user.id 存在，暂时用1代替
+  const userId = 1;
+  const userTasks = tasks.filter(task => task.user_id === userId);
+  res.json(userTasks);
+};
+
+// 创建新任务
 export const createTask = async (req: Request, res: Response) => {
-  try {
-    const { user_id, name, type, url, config } = req.body;
-    if (!user_id || !name || !type || !url) {
-      return res.status(400).json({ message: '缺少必要的任务参数' });
-    }
-
-    const newTask = await Task.create({
-      user_id,
-      name,
-      type,
-      url,
-      config,
-      status: 'pending',
-      progress: 0,
-    });
-
-    return res.status(201).json({ message: '任务创建成功', task: newTask });
-  } catch (error) {
-    console.error('创建任务错误:', error);
-    return res.status(500).json({ message: '服务器内部错误' });
+  const { user_id, name, type, url } = req.body;
+  if (!user_id || !name || !type || !url) {
+    return res.status(400).json({ message: '缺少必要字段' });
   }
+  const newTask: Task = {
+    id: tasks.length + 1,
+    user_id,
+    name,
+    type,
+    url,
+    status: 'pending',
+    progress: 0,
+  };
+  tasks.push(newTask);
+  res.status(201).json(newTask);
 };
 
-export const getTasks = async (req: Request, res: Response) => {
-  try {
-    const tasks = await Task.findAll();
-    return res.status(200).json({ tasks });
-  } catch (error) {
-    console.error('获取任务列表错误:', error);
-    return res.status(500).json({ message: '服务器内部错误' });
-  }
-};
-
+// 获取单个任务详情
 export const getTaskById = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const task = await Task.findByPk(id);
-    if (!task) {
-      return res.status(404).json({ message: '任务不存在' });
-    }
-    return res.status(200).json({ task });
-  } catch (error) {
-    console.error('获取任务详情错误:', error);
-    return res.status(500).json({ message: '服务器内部错误' });
+  const id = Number(req.params.id);
+  const task = tasks.find(t => t.id === id);
+  if (!task) {
+    return res.status(404).json({ message: '任务不存在' });
   }
+  res.json(task);
 };
