@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "bull": "^4.16.5",
+    "dotenv": "^16.5.0",
+    "redis": "^4.7.0",
+    "sequelize": "^6.37.7",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/bull": "^3.15.9",
+    "@types/dotenv": "^6.1.1",
+    "@types/node": "^22.14.1",
+    "@types/redis": "^4.0.10",
+    "@types/sequelize": "^4.28.20",
+    "@types/socket.io": "^3.0.1"
+  }
+}
