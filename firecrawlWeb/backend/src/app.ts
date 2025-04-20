@@ -6,6 +6,8 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import router from './routes/index';
 
+require("express-async-errors"); // Enable global async error handling
+
 // 加载环境变量
 dotenv.config();
 

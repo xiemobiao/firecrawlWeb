@@ -1,11 +1,24 @@
-// 删除重复导入，保留一次
-import { Router } from 'express';
-import { register, login, getUserProfile } from '../controllers/user.controller';
+import express from 'express';
+import { register, login, getUserInfo, updateUser } from '../controllers/user.controller';
+import { authMiddleware } from '../middlewares/auth.middleware';
+import asyncHandler from 'express-async-handler';
 
-const router = Router();
+const router = express.Router();
 
-router.post('/register', async (req, res, next) => { try { await register(req, res); } catch (err) { next(err); } });
-router.post('/login', async (req, res, next) => { try { await login(req, res); } catch (err) { next(err); } });
-router.get('/profile', async (req, res, next) => { try { await getUserProfile(req, res); } catch (err) { next(err); } });
+// 注册路由
+ // @ts-ignore
+router.post('/register', asyncHandler(register));
+
+// 登录路由
+ // @ts-ignore
+router.post('/login', asyncHandler(login));
+
+// 获取用户信息路由（需要认证）
+ // @ts-ignore
+router.get('/me', authMiddleware, asyncHandler(getUserInfo));
+
+// 更新用户信息路由 (需要认证)
+ // @ts-ignore
+router.put('/me', authMiddleware, asyncHandler(updateUser));
 
 export default router;
